@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { GridPattern } from './components/ui/grid-pattern';
 import ScrollReveal from './components/ScrollReveal';
 import BorderGlow from './components/BorderGlow';
+import PageLoader from './components/PageLoader';
 import {
   WA_LINK,
   nav,
@@ -41,6 +42,9 @@ export default function Home() {
 
   return (
     <>
+      {/* ─── PAGE LOADER ─────────────────────────── */}
+      <PageLoader />
+
       {/* ─── BOTTOM FADE OVERLAY ────────────────── */}
       <div className="bottom-fade-overlay" />
 
@@ -216,17 +220,17 @@ export default function Home() {
           {/* Row 1 — scrolls left */}
           <div className="showcase-marquee-row">
             <div className="showcase-marquee-track">
-              {['01','02','03','04','05'].map((id) => (
+              {['01', '02', '03', '04', '05'].map((id) => (
                 <div className="showcase-video-item" key={id}>
                   <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
                 </div>
               ))}
-              {['01','02','03','04','05'].map((id) => (
+              {['01', '02', '03', '04', '05'].map((id) => (
                 <div className="showcase-video-item" key={`dup1-${id}`} aria-hidden="true">
                   <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
                 </div>
               ))}
-              {['01','02','03','04','05'].map((id) => (
+              {['01', '02', '03', '04', '05'].map((id) => (
                 <div className="showcase-video-item" key={`dup2-${id}`} aria-hidden="true">
                   <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
                 </div>
@@ -236,17 +240,17 @@ export default function Home() {
           {/* Row 2 — scrolls right */}
           <div className="showcase-marquee-row reverse">
             <div className="showcase-marquee-track">
-              {['06','07','08','09','010'].map((id) => (
+              {['06', '07', '08', '09', '010'].map((id) => (
                 <div className="showcase-video-item" key={id}>
                   <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
                 </div>
               ))}
-              {['06','07','08','09','010'].map((id) => (
+              {['06', '07', '08', '09', '010'].map((id) => (
                 <div className="showcase-video-item" key={`dup1-${id}`} aria-hidden="true">
                   <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
                 </div>
               ))}
-              {['06','07','08','09','010'].map((id) => (
+              {['06', '07', '08', '09', '010'].map((id) => (
                 <div className="showcase-video-item" key={`dup2-${id}`} aria-hidden="true">
                   <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
                 </div>
@@ -276,23 +280,66 @@ export default function Home() {
       </section>
 
       {/* ─── ABOUT ──────────────────────────────── */}
-      <section id="about">
-        <div className="container">
-          <div className="about-grid">
-            <div>
-              <div className="about-image-box">
-                <span className="about-avatar-placeholder">🎬</span>
-                <div className="about-float-badge">{about.badge}</div>
-              </div>
+      <section id="about" className="about-section">
+        {/* decorative blobs */}
+        <div className="about-blob about-blob-1" aria-hidden="true" />
+        <div className="about-blob about-blob-2" aria-hidden="true" />
+
+        <div className="container about-container">
+          {/* ── LEFT: photo column ── */}
+          <div className="about-photo-col">
+            {/* main photo card */}
+            <div className="about-photo-wrap">
+              <img
+                src="/Profile/profile.jpg"
+                alt="Vaibhav — Content Strategist"
+                className="about-photo"
+              />
+              {/* orange accent frame */}
+              <div className="about-photo-frame" aria-hidden="true" />
             </div>
-            <div className="about-content">
-              <p className="section-label">{about.label}</p>
-              <h2>{about.headline}</h2>
-              {about.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
-              <blockquote className="passion-note">&ldquo;{about.quote}&rdquo;</blockquote>
+
+            {/* floating stat pills */}
+            <div className="about-stat-pill about-stat-pill--top">
+              <span className="about-stat-icon">📈</span>
+              <span className="about-stat-text"><strong>150M+</strong> Views Generated</span>
+            </div>
+            <div className="about-stat-pill about-stat-pill--bottom">
+              <span className="about-stat-icon">🚀</span>
+              <span className="about-stat-text"><strong>0 → 9K</strong> in 2 Months</span>
+            </div>
+          </div>
+
+          {/* ── RIGHT: content column ── */}
+          <div className="about-content-col">
+            <p className="section-label">{about.label}</p>
+            <h2 className="about-headline">{about.headline}</h2>
+
+            <div className="about-divider" />
+
+            {about.paragraphs.map((p, i) => (
+              <p key={i} className="about-para">{p}</p>
+            ))}
+
+            {/* skill tags */}
+            <div className="about-skills">
+              {['Content Strategy', 'Video Editing', 'Reels & Shorts', 'Monetization', 'Brand Building', 'Growth Hacking'].map((skill) => (
+                <span key={skill} className="about-skill-tag">{skill}</span>
+              ))}
+            </div>
+
+            <blockquote className="passion-note">
+              &ldquo;{about.quote}&rdquo;
+            </blockquote>
+
+            <div className="about-cta-row">
               <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
                 {about.cta}
               </a>
+              <div className="about-availability">
+                <span className="about-availability-dot" />
+                Available for new clients
+              </div>
             </div>
           </div>
         </div>
