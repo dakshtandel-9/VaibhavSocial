@@ -153,18 +153,63 @@ export const testimonials = {
   cards: [
     {
       text: "Working with Vaibhav completely changed how my channel looks. The edits are clean, fast, and always on-brand. My engagement literally doubled in the first month.",
-      name: '[Creator Name]',
-      platform: 'YouTube · 45K Followers',
+      name: 'Arjun Mehta',
+      platform: 'YouTube · 45K Subscribers',
       initial: 'A',
+      stars: 5,
     },
     {
       text: "I had no idea how to grow on Instagram. Vaibhav mapped out my entire content strategy and the results were insane — 9,000 followers in under two months. Highly recommend.",
-      name: '[Creator Name]',
+      name: 'Sneha Kapoor',
       platform: 'Instagram · 9K Followers',
-      initial: 'B',
+      initial: 'S',
+      stars: 5,
+    },
+    {
+      text: "He doesn't just edit — he thinks about your brand. Every reel he delivered felt intentional and viral. My views tripled and I finally started getting brand deals.",
+      name: 'Rahul Verma',
+      platform: 'Instagram · 22K Followers',
+      initial: 'R',
+      stars: 5,
+    },
+    {
+      text: "Before Vaibhav, I was posting randomly and getting nowhere. After 6 weeks of working with him, I had a proper content calendar, better hooks, and 5x the reach on every post.",
+      name: 'Priya Nair',
+      platform: 'YouTube · 18K Subscribers',
+      initial: 'P',
+      stars: 5,
+    },
+    {
+      text: "The strategy sessions alone are worth it. He told me exactly what content to make, which trends to jump on, and how to structure my videos to keep people watching.",
+      name: 'Dev Sharma',
+      platform: 'YouTube & Instagram · 30K+',
+      initial: 'D',
+      stars: 5,
+    },
+    {
+      text: "I was skeptical at first but Vaibhav delivered beyond expectations. My reels started hitting 100K+ views consistently within the first month. The thumbnail advice alone changed everything.",
+      name: 'Meera Joshi',
+      platform: 'Instagram · 14K Followers',
+      initial: 'M',
+      stars: 5,
+    },
+    {
+      text: "From zero to 12,000 subscribers in 3 months. Vaibhav's editing style is premium, the strategy is sharp, and he's literally always available on WhatsApp to brainstorm. Best investment I've made.",
+      name: 'Karan Bhatia',
+      platform: 'YouTube · 12K Subscribers',
+      initial: 'K',
+      stars: 5,
+    },
+    {
+      text: "I hired Vaibhav to help with my food channel and the transformation was immediate. The color grading, transitions, and music choices made my videos look like they had a full production team behind them.",
+      name: 'Anjali Singh',
+      platform: 'Instagram · 8K Followers',
+      initial: 'A',
+      stars: 5,
     },
   ],
 };
+
 
 export const pricing = {
   label: 'Pricing',

@@ -1,14 +1,12 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { GridPattern } from './components/ui/grid-pattern';
-import ScrollReveal from './components/ScrollReveal';
 import BorderGlow from './components/BorderGlow';
 import PageLoader from './components/PageLoader';
+import NavBar from './components/NavBar';
+import ClientVoicesSection from './components/ClientVoicesSection';
 import {
   WA_LINK,
-  nav,
   hero,
   showcase,
   promise,
@@ -26,20 +24,6 @@ import {
 const VideoArcGallery = dynamic(() => import('./components/VideoArcGallery'), { ssr: false });
 
 export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    setMobileOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <>
       {/* ─── PAGE LOADER ─────────────────────────── */}
@@ -48,32 +32,8 @@ export default function Home() {
       {/* ─── BOTTOM FADE OVERLAY ────────────────── */}
       <div className="bottom-fade-overlay" />
 
-      {/* ─── MOBILE NAV ─────────────────────────── */}
-      <div className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
-        <button className="mobile-close" onClick={() => setMobileOpen(false)} aria-label="Close">✕</button>
-        <a href="#services" onClick={() => scrollToSection('services')}>Services</a>
-        <a href="#showcase" onClick={() => scrollToSection('showcase')}>Work</a>
-        <a href="#results" onClick={() => scrollToSection('results')}>Results</a>
-        <a href="#about" onClick={() => scrollToSection('about')}>About</a>
-        <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk" style={{ marginTop: '0.5rem' }}>
-          {nav.cta}
-        </a>
-      </div>
-
       {/* ─── NAVBAR ─────────────────────────────── */}
-      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-        <a href="#" className="navbar-logo">{nav.logo}</a>
-        <ul className="nav-links">
-          <li><a href="#services" onClick={e => { e.preventDefault(); scrollToSection('services'); }}>Services</a></li>
-          <li><a href="#showcase" onClick={e => { e.preventDefault(); scrollToSection('showcase'); }}>Work</a></li>
-          <li><a href="#results" onClick={e => { e.preventDefault(); scrollToSection('results'); }}>Results</a></li>
-          <li><a href="#about" onClick={e => { e.preventDefault(); scrollToSection('about'); }}>About</a></li>
-        </ul>
-        <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk">{nav.cta}</a>
-        <button className="hamburger" onClick={() => setMobileOpen(true)} aria-label="Open menu">
-          <span /><span /><span />
-        </button>
-      </nav>
+      <NavBar />
 
       {/* ─── HERO ────────────────────────────────────────── */}
       <section className="hero" id="hero">
@@ -100,7 +60,7 @@ export default function Home() {
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
               {hero.ctas.primary}
             </a>
-            <a href="#showcase" onClick={e => { e.preventDefault(); scrollToSection('showcase'); }} className="btn-secondary">
+            <a href="#showcase" className="btn-secondary">
               {hero.ctas.secondary}
             </a>
           </div>
@@ -113,40 +73,16 @@ export default function Home() {
         <div className="container">
           <div className="promise-inner">
             <p className="promise-label">My Promise to You</p>
-            <ScrollReveal
-              baseOpacity={0.06}
-              enableBlur
-              baseRotation={5}
-              blurStrength={6}
-              textSize="clamp(2.4rem, 5.5vw, 4rem)"
-              textColor="var(--dark)"
-              className="promise-headline"
-            >
+            <h2 className="promise-headline" style={{ fontSize: 'clamp(2.4rem, 5.5vw, 4rem)', color: 'var(--dark)' }}>
               {promise.headline}
-            </ScrollReveal>
+            </h2>
             <div className="promise-divider" />
-            <ScrollReveal
-              baseOpacity={0.06}
-              enableBlur
-              baseRotation={4}
-              blurStrength={5}
-              textSize="clamp(1.15rem, 2.5vw, 1.5rem)"
-              textColor="var(--orange)"
-              className="promise-highlight-text"
-            >
+            <p className="promise-highlight-text" style={{ fontSize: 'clamp(1.15rem, 2.5vw, 1.5rem)', color: 'var(--orange)' }}>
               {promise.highlight}
-            </ScrollReveal>
-            <ScrollReveal
-              baseOpacity={0.06}
-              enableBlur
-              baseRotation={2}
-              blurStrength={3}
-              textSize="clamp(1rem, 2vw, 1.2rem)"
-              textColor="var(--gray)"
-              className="promise-body-text"
-            >
+            </p>
+            <p className="promise-body-text" style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: 'var(--gray)' }}>
               {promise.body}
-            </ScrollReveal>
+            </p>
           </div>
         </div>
       </section>
@@ -217,7 +153,7 @@ export default function Home() {
           <p className="section-sub">{showcase.subtitle}</p>
         </div>
         <div className="showcase-marquee-wrap">
-          {/* Row 1 — scrolls left */}
+          {/* Row 1 — scrolls left (2 copies so animation loops at -50%) */}
           <div className="showcase-marquee-row">
             <div className="showcase-marquee-track">
               {['01', '02', '03', '04', '05'].map((id) => (
@@ -226,18 +162,13 @@ export default function Home() {
                 </div>
               ))}
               {['01', '02', '03', '04', '05'].map((id) => (
-                <div className="showcase-video-item" key={`dup1-${id}`} aria-hidden="true">
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
-                </div>
-              ))}
-              {['01', '02', '03', '04', '05'].map((id) => (
-                <div className="showcase-video-item" key={`dup2-${id}`} aria-hidden="true">
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                <div className="showcase-video-item" key={`dup-${id}`} aria-hidden="true">
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="none" />
                 </div>
               ))}
             </div>
           </div>
-          {/* Row 2 — scrolls right */}
+          {/* Row 2 — scrolls right (2 copies so animation loops at -50%) */}
           <div className="showcase-marquee-row reverse">
             <div className="showcase-marquee-track">
               {['06', '07', '08', '09', '010'].map((id) => (
@@ -246,13 +177,8 @@ export default function Home() {
                 </div>
               ))}
               {['06', '07', '08', '09', '010'].map((id) => (
-                <div className="showcase-video-item" key={`dup1-${id}`} aria-hidden="true">
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
-                </div>
-              ))}
-              {['06', '07', '08', '09', '010'].map((id) => (
-                <div className="showcase-video-item" key={`dup2-${id}`} aria-hidden="true">
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                <div className="showcase-video-item" key={`dup-${id}`} aria-hidden="true">
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="none" />
                 </div>
               ))}
             </div>
@@ -290,10 +216,13 @@ export default function Home() {
           <div className="about-photo-col">
             {/* main photo card */}
             <div className="about-photo-wrap">
-              <img
+              <Image
                 src="/Profile/profile.jpg"
                 alt="Vaibhav — Content Strategist"
                 className="about-photo"
+                width={480}
+                height={540}
+                priority
               />
               {/* orange accent frame */}
               <div className="about-photo-frame" aria-hidden="true" />
@@ -364,58 +293,127 @@ export default function Home() {
       </section>
 
       {/* ─── TESTIMONIALS ───────────────────────── */}
-      <section id="testimonials">
+      <section id="testimonials" className="testimonials-section">
         <div className="container">
           <p className="section-label">{testimonials.label}</p>
           <h2 className="section-title"><span className="orange-underline">{testimonials.title}</span></h2>
           <p className="section-sub">{testimonials.subtitle}</p>
-          <div className="testimonials-grid">
-            {testimonials.cards.map((card) => (
-              <div className="testimonial-card" key={card.platform}>
-                <div className="quote-mark">&ldquo;</div>
-                <p className="testimonial-text">{card.text}</p>
-                <div className="testimonial-author">
-                  <div className="author-avatar">{card.initial}</div>
-                  <div className="author-info">
-                    <strong>{card.name}</strong>
-                    <span>{card.platform}</span>
+        </div>
+
+        {/* Row 1 — scrolls left (2 copies so animation loops at -50%) */}
+        <div className="reviews-marquee-wrap">
+          <div className="reviews-marquee-row">
+            <div className="reviews-track">
+              {[...testimonials.cards, ...testimonials.cards].map((card, i) => (
+                <div className="review-card" key={i}>
+                  <div className="review-stars">{'★'.repeat(card.stars ?? 5)}</div>
+                  <p className="review-text">&ldquo;{card.text}&rdquo;</p>
+                  <div className="review-author">
+                    <div className="review-avatar">{card.initial}</div>
+                    <div className="review-info">
+                      <strong>{card.name}</strong>
+                      <span>{card.platform}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Row 2 — scrolls right (2 copies) */}
+          <div className="reviews-marquee-row reviews-reverse">
+            <div className="reviews-track">
+              {[...[...testimonials.cards].reverse(), ...[...testimonials.cards].reverse()].map((card, i) => (
+                <div className="review-card" key={i}>
+                  <div className="review-stars">{'★'.repeat(card.stars ?? 5)}</div>
+                  <p className="review-text">&ldquo;{card.text}&rdquo;</p>
+                  <div className="review-author">
+                    <div className="review-avatar">{card.initial}</div>
+                    <div className="review-info">
+                      <strong>{card.name}</strong>
+                      <span>{card.platform}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
+
+      {/* ─── CLIENT VOICES ───────────────────────── */}
+      <ClientVoicesSection />
 
       {/* ─── PRICING ────────────────────────────── */}
       <section id="pricing" className="pricing-section">
         <div className="container">
           <p className="section-label pricing-label">{pricing.label}</p>
           <h2 className="section-title pricing-title">{pricing.title}</h2>
-          <div className="pricing-card">
-            <h3>{pricing.cardHeadline}</h3>
-            <p className="pricing-card-sub">{pricing.cardSub}</p>
-            <ul className="pricing-features">
-              {pricing.features.map((f) => (
-                <li key={f}><span className="check">✓</span> {f}</li>
-              ))}
-            </ul>
-            <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
-              {pricing.cta}
-            </a>
-            <p className="pricing-note">{pricing.note}</p>
+          <div className="pricing-card-wrap">
+            <div className="pricing-card">
+              <h3>{pricing.cardHeadline}</h3>
+              <p className="pricing-card-sub">{pricing.cardSub}</p>
+              <ul className="pricing-features">
+                {pricing.features.map((f) => (
+                  <li key={f}><span className="check">✓</span> {f}</li>
+                ))}
+              </ul>
+              <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
+                {pricing.cta}
+              </a>
+              <p className="pricing-note">{pricing.note}</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── CTA ────────────────────────────────── */}
       <section id="contact">
+        {/* decorative glow orbs */}
+        <div className="cta-orb cta-orb--left" aria-hidden="true" />
+        <div className="cta-orb cta-orb--right" aria-hidden="true" />
+        <div className="cta-orb cta-orb--center" aria-hidden="true" />
+
         <div className="cta-inner container">
-          <h2>{cta.headline}</h2>
-          <p>{cta.sub}</p>
-          <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-white">
+          {/* availability pill */}
+          <div className="cta-availability-pill">
+            <span className="cta-avail-dot" />
+            <span>2 spots open this month</span>
+          </div>
+
+          <h2 className="cta-headline">
+            Ready to Grow{' '}
+            <span className="cta-headline-accent">Your Channel?</span>
+          </h2>
+          <p className="cta-sub">{cta.sub}</p>
+
+          {/* trust badges */}
+          <div className="cta-badges">
+            <div className="cta-badge">
+              <span className="cta-badge-num">150M+</span>
+              <span className="cta-badge-label">Views Delivered</span>
+            </div>
+            <div className="cta-badge-divider" />
+            <div className="cta-badge">
+              <span className="cta-badge-num">50+</span>
+              <span className="cta-badge-label">Happy Creators</span>
+            </div>
+            <div className="cta-badge-divider" />
+            <div className="cta-badge">
+              <span className="cta-badge-num">5★</span>
+              <span className="cta-badge-label">Average Rating</span>
+            </div>
+          </div>
+
+          <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="cta-btn-main">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.858L.054 23.454a.5.5 0 0 0 .492.596l5.788-1.517A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.951 9.951 0 0 1-5.06-1.376l-.361-.214-3.438.901.917-3.346-.235-.375A9.953 9.953 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+            </svg>
             {cta.btn}
           </a>
+
+          <p className="cta-note">Free strategy call · No commitment · Reply in minutes</p>
         </div>
       </section>
 
@@ -426,12 +424,7 @@ export default function Home() {
           <ul className="footer-links">
             {footer.links.map((link) => (
               <li key={link}>
-                <a
-                  href={`#${link.toLowerCase()}`}
-                  onClick={e => { e.preventDefault(); scrollToSection(link.toLowerCase()); }}
-                >
-                  {link}
-                </a>
+                <a href={`#${link.toLowerCase()}`}>{link}</a>
               </li>
             ))}
           </ul>
