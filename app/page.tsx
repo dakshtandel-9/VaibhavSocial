@@ -2,10 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { GridPattern } from './components/ui/grid-pattern';
+import ScrollReveal from './components/ScrollReveal';
+import BorderGlow from './components/BorderGlow';
+import {
+  WA_LINK,
+  nav,
+  hero,
+  showcase,
+  promise,
+  services,
+  beyond,
+  results,
+  about,
+  process,
+  testimonials,
+  pricing,
+  cta,
+  footer,
+} from '../lib/content';
 
 const VideoArcGallery = dynamic(() => import('./components/VideoArcGallery'), { ssr: false });
-
-const WA_LINK = 'https://wa.me/919024760502';
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,28 +41,31 @@ export default function Home() {
 
   return (
     <>
+      {/* ─── BOTTOM FADE OVERLAY ────────────────── */}
+      <div className="bottom-fade-overlay" />
+
       {/* ─── MOBILE NAV ─────────────────────────── */}
       <div className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
         <button className="mobile-close" onClick={() => setMobileOpen(false)} aria-label="Close">✕</button>
         <a href="#services" onClick={() => scrollToSection('services')}>Services</a>
-        <a href="#work" onClick={() => scrollToSection('work')}>Work</a>
+        <a href="#showcase" onClick={() => scrollToSection('showcase')}>Work</a>
+        <a href="#results" onClick={() => scrollToSection('results')}>Results</a>
         <a href="#about" onClick={() => scrollToSection('about')}>About</a>
-        <a href="#contact" onClick={() => scrollToSection('contact')}>Contact</a>
         <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk" style={{ marginTop: '0.5rem' }}>
-          Let&apos;s Talk 💬
+          {nav.cta}
         </a>
       </div>
 
       {/* ─── NAVBAR ─────────────────────────────── */}
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-        <a href="#" className="navbar-logo">Vaibhav Social</a>
+        <a href="#" className="navbar-logo">{nav.logo}</a>
         <ul className="nav-links">
           <li><a href="#services" onClick={e => { e.preventDefault(); scrollToSection('services'); }}>Services</a></li>
-          <li><a href="#work" onClick={e => { e.preventDefault(); scrollToSection('work'); }}>Work</a></li>
+          <li><a href="#showcase" onClick={e => { e.preventDefault(); scrollToSection('showcase'); }}>Work</a></li>
+          <li><a href="#results" onClick={e => { e.preventDefault(); scrollToSection('results'); }}>Results</a></li>
           <li><a href="#about" onClick={e => { e.preventDefault(); scrollToSection('about'); }}>About</a></li>
-          <li><a href="#contact" onClick={e => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a></li>
         </ul>
-        <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk">Let&apos;s Talk 💬</a>
+        <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk">{nav.cta}</a>
         <button className="hamburger" onClick={() => setMobileOpen(true)} aria-label="Open menu">
           <span /><span /><span />
         </button>
@@ -53,89 +73,204 @@ export default function Home() {
 
       {/* ─── HERO ────────────────────────────────────────── */}
       <section className="hero" id="hero">
+        <GridPattern
+          width={30}
+          height={30}
+          x={-1}
+          y={-1}
+          strokeDasharray="4 2"
+          strokeColor="rgba(160,160,160,0.5)"
+          opacity={0.9}
+        />
         <div className="hero-inner">
-          {/* 1️⃣ Badge */}
-          <div className="hero-badge">
-            🎬 Video Editor &amp; Content Strategist
-          </div>
-
-          {/* 2️⃣ Heading */}
+          <div className="hero-badge">{hero.badge}</div>
           <h1 className="font-display">
-            Your Content. <br />
-            <span className="orange-word">Supercharged.</span>
+            {hero.headline[0]} <br />
+            <span className="orange-word">{hero.headline[1]}</span>
           </h1>
-
-          {/* 3️⃣ Description */}
-          <p className="hero-sub">
-            I help Instagram &amp; YouTube creators grow faster with scroll-stopping
-            video edits and smart content strategy.
-          </p>
-
-          {/* 4️⃣ Video Arc Gallery - full bleed */}
+          <p className="hero-sub">{hero.sub}</p>
           <div style={{ width: '100vw', position: 'relative', left: '50%', transform: 'translateX(-50%)', margin: '2rem 0' }}>
             <VideoArcGallery />
           </div>
-
-          {/* 5️⃣ CTA Buttons */}
           <div className="hero-ctas">
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
-              Let&apos;s Work Together 🚀
+              {hero.ctas.primary}
             </a>
-            <a href="#work" onClick={e => { e.preventDefault(); scrollToSection('work'); }} className="btn-secondary">
-              See My Work ↓
+            <a href="#showcase" onClick={e => { e.preventDefault(); scrollToSection('showcase'); }} className="btn-secondary">
+              {hero.ctas.secondary}
             </a>
           </div>
         </div>
       </section>
 
-      {/* ─── SERVICES ───────────────────────────── */}
-      <section id="services">
+      {/* ─── PROMISE ────────────────────────────── */}
+      <section id="promise" className="promise-section">
+        <div className="promise-accent-line" />
         <div className="container">
-          <h2 className="section-title"><span className="orange-underline">What I Do</span></h2>
-          <p className="section-sub">Everything you need to grow — beautifully edited, strategically planned.</p>
+          <div className="promise-inner">
+            <p className="promise-label">My Promise to You</p>
+            <ScrollReveal
+              baseOpacity={0.06}
+              enableBlur
+              baseRotation={5}
+              blurStrength={6}
+              textSize="clamp(2.4rem, 5.5vw, 4rem)"
+              textColor="var(--dark)"
+              className="promise-headline"
+            >
+              {promise.headline}
+            </ScrollReveal>
+            <div className="promise-divider" />
+            <ScrollReveal
+              baseOpacity={0.06}
+              enableBlur
+              baseRotation={4}
+              blurStrength={5}
+              textSize="clamp(1.15rem, 2.5vw, 1.5rem)"
+              textColor="var(--orange)"
+              className="promise-highlight-text"
+            >
+              {promise.highlight}
+            </ScrollReveal>
+            <ScrollReveal
+              baseOpacity={0.06}
+              enableBlur
+              baseRotation={2}
+              blurStrength={3}
+              textSize="clamp(1rem, 2vw, 1.2rem)"
+              textColor="var(--gray)"
+              className="promise-body-text"
+            >
+              {promise.body}
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SERVICES ───────────────────────────── */}
+      <section id="services" className="services-section">
+        <div className="container">
+          <p className="section-label">{services.label}</p>
+          <h2 className="section-title"><span className="orange-underline">{services.title}</span></h2>
+          <p className="section-sub">{services.subtitle}</p>
           <div className="services-grid">
-            <div className="service-card">
-              <span className="service-icon">✂️</span>
-              <h3>Video Editing</h3>
-              <p>Cuts, pacing, transitions, and effects that keep viewers hooked till the last second.</p>
+            {services.cards.map((card) => (
+              <BorderGlow
+                key={card.title}
+                backgroundColor="#FFFFFF"
+                borderRadius={24}
+                glowColor="25 100 50"
+                colors={['#FF6B00', '#FF9A4D', '#FFF4EC']}
+                glowRadius={20}
+                glowIntensity={1.1}
+                edgeSensitivity={25}
+              >
+                <div className="service-card-content">
+                  <span className="service-card-icon">{card.icon}</span>
+                  <h3>{card.title}</h3>
+                  <p>{card.body}</p>
+                </div>
+              </BorderGlow>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── BEYOND ─────────────────────────────── */}
+      <section id="beyond" className="beyond-section">
+        <div className="container">
+          <p className="section-label beyond-label">{beyond.label}</p>
+          <h2 className="section-title beyond-title">{beyond.title}</h2>
+          <p className="section-sub beyond-sub">{beyond.subtitle}</p>
+          <div className="beyond-grid">
+            {beyond.items.map((item) => (
+              <BorderGlow
+                key={item.title}
+                backgroundColor="#FFFFFF"
+                borderRadius={20}
+                glowColor="25 100 50"
+                colors={['#FF6B00', '#FF9A4D', '#FFF4EC']}
+                glowRadius={20}
+                glowIntensity={1.1}
+                edgeSensitivity={25}
+              >
+                <div className="beyond-item">
+                  <div className="beyond-icon">{item.icon}</div>
+                  <h4>{item.title}</h4>
+                  <p>{item.body}</p>
+                </div>
+              </BorderGlow>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SHOWCASE ───────────────────────────── */}
+      <section id="showcase" className="showcase-section">
+        <div className="container">
+          <p className="section-label">{showcase.label}</p>
+          <h2 className="section-title"><span className="orange-underline">{showcase.title}</span></h2>
+          <p className="section-sub">{showcase.subtitle}</p>
+        </div>
+        <div className="showcase-marquee-wrap">
+          {/* Row 1 — scrolls left */}
+          <div className="showcase-marquee-row">
+            <div className="showcase-marquee-track">
+              {['01','02','03','04','05'].map((id) => (
+                <div className="showcase-video-item" key={id}>
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                </div>
+              ))}
+              {['01','02','03','04','05'].map((id) => (
+                <div className="showcase-video-item" key={`dup1-${id}`} aria-hidden="true">
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                </div>
+              ))}
+              {['01','02','03','04','05'].map((id) => (
+                <div className="showcase-video-item" key={`dup2-${id}`} aria-hidden="true">
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                </div>
+              ))}
             </div>
-            <div className="service-card">
-              <span className="service-icon">📱</span>
-              <h3>Reels &amp; Shorts</h3>
-              <p>Short-form content built for the algorithm — fast, punchy, and made to go viral.</p>
-            </div>
-            <div className="service-card">
-              <span className="service-icon">📐</span>
-              <h3>Content Strategy &amp; Planning</h3>
-              <p>Data-backed content plans: hooks, posting schedules, formats, and ideas tailored to your niche.</p>
+          </div>
+          {/* Row 2 — scrolls right */}
+          <div className="showcase-marquee-row reverse">
+            <div className="showcase-marquee-track">
+              {['06','07','08','09','010'].map((id) => (
+                <div className="showcase-video-item" key={id}>
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                </div>
+              ))}
+              {['06','07','08','09','010'].map((id) => (
+                <div className="showcase-video-item" key={`dup1-${id}`} aria-hidden="true">
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                </div>
+              ))}
+              {['06','07','08','09','010'].map((id) => (
+                <div className="showcase-video-item" key={`dup2-${id}`} aria-hidden="true">
+                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* ─── RESULTS ────────────────────────────── */}
-      <section id="work">
+      <section id="results" className="results-section">
         <div className="container">
-          <h2 className="section-title"><span className="orange-underline">Real Results. Real Creators.</span></h2>
-          <p className="section-sub">Numbers that speak louder than words.</p>
-          <div className="results-grid">
-            <div className="result-card">
-              <div className="result-number">
-                45,000+
+          <p className="section-label">{results.label}</p>
+          <h2 className="section-title"><span className="orange-underline">{results.title}</span></h2>
+          <p className="section-sub">{results.subtitle}</p>
+          <div className="results-grid results-grid-4">
+            {results.stats.map((stat) => (
+              <div className="result-card" key={stat.label}>
+                <div className="result-number">{stat.number}</div>
+                <div className="result-label">{stat.label}</div>
+                <div className="result-desc">{stat.desc}</div>
+                <div className="result-context">{stat.context}</div>
               </div>
-              <div className="result-label">Followers</div>
-              <div className="result-desc">Top client milestone</div>
-            </div>
-            <div className="result-card">
-              <div className="result-number">0 → 9,000</div>
-              <div className="result-label">In 2 Months</div>
-              <div className="result-desc">Channel grown from scratch</div>
-            </div>
-            <div className="result-card">
-              <div className="result-number">2M+</div>
-              <div className="result-label">Views Generated</div>
-              <div className="result-desc">Across multiple videos</div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -147,19 +282,36 @@ export default function Home() {
             <div>
               <div className="about-image-box">
                 <span className="about-avatar-placeholder">🎬</span>
+                <div className="about-float-badge">{about.badge}</div>
               </div>
             </div>
             <div className="about-content">
-              <h2>Hey, I&apos;m Vaibhav 👋</h2>
-              <p>
-                I&apos;m a video editor and content strategist who works with Instagram and YouTube creators to help them grow,
-                stay consistent, and actually look good doing it. I&apos;ve helped creators go from zero to thousands of
-                followers — and I bring that same energy to every project I take on.
-              </p>
+              <p className="section-label">{about.label}</p>
+              <h2>{about.headline}</h2>
+              {about.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+              <blockquote className="passion-note">&ldquo;{about.quote}&rdquo;</blockquote>
               <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
-                Let&apos;s Build Something →
+                {about.cta}
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PROCESS ────────────────────────────── */}
+      <section id="process" className="process-section">
+        <div className="container">
+          <p className="section-label">{process.label}</p>
+          <h2 className="section-title"><span className="orange-underline">{process.title}</span></h2>
+          <p className="section-sub">{process.subtitle}</p>
+          <div className="process-steps">
+            {process.steps.map((step) => (
+              <div className="process-step" key={step.num}>
+                <div className="step-number">{step.num}</div>
+                <h4>{step.title}</h4>
+                <p>{step.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -167,37 +319,44 @@ export default function Home() {
       {/* ─── TESTIMONIALS ───────────────────────── */}
       <section id="testimonials">
         <div className="container">
-          <h2 className="section-title"><span className="orange-underline">What Creators Say</span></h2>
-          <p className="section-sub">Don&apos;t take my word for it.</p>
+          <p className="section-label">{testimonials.label}</p>
+          <h2 className="section-title"><span className="orange-underline">{testimonials.title}</span></h2>
+          <p className="section-sub">{testimonials.subtitle}</p>
           <div className="testimonials-grid">
-            <div className="testimonial-card">
-              <div className="quote-mark">&ldquo;</div>
-              <p className="testimonial-text">
-                Working with Vaibhav completely changed how my channel looks. The edits are clean, fast, and always on-brand.
-                My engagement literally doubled in the first month.
-              </p>
-              <div className="testimonial-author">
-                <div className="author-avatar">A</div>
-                <div className="author-info">
-                  <strong>[Creator Name] [PLACEHOLDER]</strong>
-                  <span>YouTube · 45K Followers</span>
+            {testimonials.cards.map((card) => (
+              <div className="testimonial-card" key={card.platform}>
+                <div className="quote-mark">&ldquo;</div>
+                <p className="testimonial-text">{card.text}</p>
+                <div className="testimonial-author">
+                  <div className="author-avatar">{card.initial}</div>
+                  <div className="author-info">
+                    <strong>{card.name}</strong>
+                    <span>{card.platform}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="quote-mark">&ldquo;</div>
-              <p className="testimonial-text">
-                I had no idea how to grow on Instagram. Vaibhav mapped out my entire content strategy and the results were
-                insane — 9,000 followers in under two months. Highly recommend.
-              </p>
-              <div className="testimonial-author">
-                <div className="author-avatar">B</div>
-                <div className="author-info">
-                  <strong>[Creator Name] [PLACEHOLDER]</strong>
-                  <span>Instagram · 9K Followers</span>
-                </div>
-              </div>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PRICING ────────────────────────────── */}
+      <section id="pricing" className="pricing-section">
+        <div className="container">
+          <p className="section-label pricing-label">{pricing.label}</p>
+          <h2 className="section-title pricing-title">{pricing.title}</h2>
+          <div className="pricing-card">
+            <h3>{pricing.cardHeadline}</h3>
+            <p className="pricing-card-sub">{pricing.cardSub}</p>
+            <ul className="pricing-features">
+              {pricing.features.map((f) => (
+                <li key={f}><span className="check">✓</span> {f}</li>
+              ))}
+            </ul>
+            <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
+              {pricing.cta}
+            </a>
+            <p className="pricing-note">{pricing.note}</p>
           </div>
         </div>
       </section>
@@ -205,10 +364,10 @@ export default function Home() {
       {/* ─── CTA ────────────────────────────────── */}
       <section id="contact">
         <div className="cta-inner container">
-          <h2>Ready to Grow Your Channel?</h2>
-          <p>Let&apos;s talk about your content — no fluff, just results.</p>
+          <h2>{cta.headline}</h2>
+          <p>{cta.sub}</p>
           <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-white">
-            💬 Chat on WhatsApp →
+            {cta.btn}
           </a>
         </div>
       </section>
@@ -216,14 +375,20 @@ export default function Home() {
       {/* ─── FOOTER ─────────────────────────────── */}
       <footer>
         <div className="footer-inner">
-          <a href="#" className="footer-logo">Vaibhav Social</a>
+          <a href="#" className="footer-logo">{footer.logo}</a>
           <ul className="footer-links">
-            <li><a href="#services" onClick={e => { e.preventDefault(); scrollToSection('services'); }}>Services</a></li>
-            <li><a href="#work" onClick={e => { e.preventDefault(); scrollToSection('work'); }}>Work</a></li>
-            <li><a href="#about" onClick={e => { e.preventDefault(); scrollToSection('about'); }}>About</a></li>
-            <li><a href="#contact" onClick={e => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a></li>
+            {footer.links.map((link) => (
+              <li key={link}>
+                <a
+                  href={`#${link.toLowerCase()}`}
+                  onClick={e => { e.preventDefault(); scrollToSection(link.toLowerCase()); }}
+                >
+                  {link}
+                </a>
+              </li>
+            ))}
           </ul>
-          <p className="footer-copy">© 2024 Vaibhav Social. All rights reserved.</p>
+          <p className="footer-copy">{footer.copy}</p>
         </div>
       </footer>
     </>

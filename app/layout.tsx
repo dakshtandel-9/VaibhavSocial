@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SmoothCursor } from "./components/SmoothCursor";
 
 export const metadata: Metadata = {
   title: "Vaibhav Social — Video Editor & Content Strategist",
@@ -19,7 +20,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body>{children}</body>
+      <body>
+        <SmoothCursor />
+        {children}
+      </body>
     </html>
   );
 }
