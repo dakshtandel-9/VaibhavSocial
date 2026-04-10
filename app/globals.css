@@ -969,7 +969,11 @@ section { padding: 6rem 2rem; }
   margin-top: 1.5rem;
   padding: 1.5rem 0 2rem;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
+
 /* edge fades */
 .cv-marquee-wrap::before,
 .cv-marquee-wrap::after {
@@ -1006,6 +1010,15 @@ section { padding: 6rem 2rem; }
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+@keyframes cv-scroll-reverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.cv-reverse .cv-track {
+  animation-name: cv-scroll-reverse;
+  animation-duration: 45s;
+}
+
 
 /* video card / button */
 .cv-card {

@@ -5,6 +5,7 @@ import PageLoader from './components/PageLoader';
 import NavBar from './components/NavBar';
 import ClientVoicesSection from './components/ClientVoicesSection';
 import VideoArcGalleryClient from './components/VideoArcGalleryClient';
+import ShowcaseSection from './components/ShowcaseSection';
 import {
   WA_LINK,
   hero,
@@ -144,45 +145,7 @@ export default function Home() {
       </section>
 
       {/* ─── SHOWCASE ───────────────────────────── */}
-      <section id="showcase" className="showcase-section">
-        <div className="container">
-          <p className="section-label">{showcase.label}</p>
-          <h2 className="section-title"><span className="orange-underline">{showcase.title}</span></h2>
-          <p className="section-sub">{showcase.subtitle}</p>
-        </div>
-        <div className="showcase-marquee-wrap">
-          {/* Row 1 — scrolls left (2 copies so animation loops at -50%) */}
-          <div className="showcase-marquee-row">
-            <div className="showcase-marquee-track">
-              {['01', '02', '03', '04', '05'].map((id) => (
-                <div className="showcase-video-item" key={id}>
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
-                </div>
-              ))}
-              {['01', '02', '03', '04', '05'].map((id) => (
-                <div className="showcase-video-item" key={`dup-${id}`} aria-hidden="true">
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="none" />
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* Row 2 — scrolls right (2 copies so animation loops at -50%) */}
-          <div className="showcase-marquee-row reverse">
-            <div className="showcase-marquee-track">
-              {['06', '07', '08', '09', '010'].map((id) => (
-                <div className="showcase-video-item" key={id}>
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="metadata" />
-                </div>
-              ))}
-              {['06', '07', '08', '09', '010'].map((id) => (
-                <div className="showcase-video-item" key={`dup-${id}`} aria-hidden="true">
-                  <video src={`/heroVideos/${id}.mp4`} autoPlay muted loop playsInline preload="none" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <ShowcaseSection label={showcase.label} title={showcase.title} subtitle={showcase.subtitle} />
 
       {/* ─── RESULTS ────────────────────────────── */}
       <section id="results" className="results-section">
