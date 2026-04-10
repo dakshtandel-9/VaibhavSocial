@@ -1,8 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const VIDEO_IDS = ['01','02','03','04','05','06','07','08','09','010'];
+
+function VideoCard({ id, onClick }: { id: string; onClick: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleLoaded = () => {
+    const el = videoRef.current;
+    if (el) el.currentTime = 0.5; // seek to 0.5s to get a visible frame
+  };
+
+  return (
+    <button
+      className="cv-card"
+      onClick={onClick}
+      aria-label={`Watch client video ${id}`}
+    >
+      <video
+        ref={videoRef}
+        src={`/heroVideos/${id}.mp4`}
+        muted
+        playsInline
+        preload="metadata"
+        className="cv-thumb"
+        onLoadedMetadata={handleLoaded}
+      />
+      <div className="cv-play-overlay">
+        <div className="cv-play-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+        <span className="cv-play-label">Watch Story</span>
+      </div>
+    </button>
+  );
+}
 
 export default function ClientVoicesSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
@@ -21,29 +56,11 @@ export default function ClientVoicesSection() {
           <div className="cv-marquee-row">
             <div className="cv-track">
               {[...VIDEO_IDS, ...VIDEO_IDS].map((id, i) => (
-                <button
+                <VideoCard
                   key={i}
-                  className="cv-card"
+                  id={id}
                   onClick={() => setActiveVideo(`/heroVideos/${id}.mp4`)}
-                  aria-label={`Watch client video ${id}`}
-                >
-                  <video
-                    src={`/heroVideos/${id}.mp4`}
-                    muted
-                    loop
-                    playsInline
-                    preload="none"
-                    className="cv-thumb"
-                  />
-                  <div className="cv-play-overlay">
-                    <div className="cv-play-btn">
-                      <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </div>
-                    <span className="cv-play-label">Watch Story</span>
-                  </div>
-                </button>
+                />
               ))}
             </div>
           </div>

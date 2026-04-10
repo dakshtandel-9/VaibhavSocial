@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import { GridPattern } from './components/ui/grid-pattern';
 import BorderGlow from './components/BorderGlow';
 import PageLoader from './components/PageLoader';
 import NavBar from './components/NavBar';
 import ClientVoicesSection from './components/ClientVoicesSection';
+import VideoArcGalleryClient from './components/VideoArcGalleryClient';
 import {
   WA_LINK,
   hero,
@@ -20,8 +20,6 @@ import {
   cta,
   footer,
 } from '../lib/content';
-
-const VideoArcGallery = dynamic(() => import('./components/VideoArcGallery'), { ssr: false });
 
 export default function Home() {
   return (
@@ -54,7 +52,7 @@ export default function Home() {
           </h1>
           <p className="hero-sub">{hero.sub}</p>
           <div style={{ width: '100vw', position: 'relative', left: '50%', transform: 'translateX(-50%)', margin: '2rem 0' }}>
-            <VideoArcGallery />
+            <VideoArcGalleryClient />
           </div>
           <div className="hero-ctas">
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
