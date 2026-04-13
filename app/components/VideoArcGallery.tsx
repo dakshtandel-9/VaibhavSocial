@@ -3,16 +3,16 @@
 import { useRef, useState, useEffect } from 'react';
 
 const VIDEOS = [
-  "/heroVideos/01.mp4",
-  "/heroVideos/02.mp4",
-  "/heroVideos/03.mp4",
-  "/heroVideos/04.mp4",
-  "/heroVideos/05.mp4",
-  "/heroVideos/06.mp4",
-  "/heroVideos/07.mp4",
-  "/heroVideos/08.mp4",
-  "/heroVideos/09.mp4",
-  "/heroVideos/010.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060187/010_q2pgb5.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060174/01_zwpokk.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060173/03_ex2aox.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060172/05_foga6w.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060170/02_efrskn.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060168/04_juzngp.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060164/08_jdqd3e.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060164/06_tiyuqc.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060163/07_tynqjg.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060155/09_n7ffgg.mp4",
 ];
 
 const N = VIDEOS.length;

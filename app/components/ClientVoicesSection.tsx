@@ -3,7 +3,18 @@
 import { useState } from 'react';
 import { VideoCard, VideoModal } from './VideoCardGrid';
 
-const VIDEO_IDS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '010'];
+const VIDEOS = [
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060187/010_q2pgb5.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060174/01_zwpokk.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060173/03_ex2aox.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060172/05_foga6w.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060170/02_efrskn.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060168/04_juzngp.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060164/08_jdqd3e.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060164/06_tiyuqc.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060163/07_tynqjg.mp4",
+  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060155/09_n7ffgg.mp4",
+];
 
 export default function ClientVoicesSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
@@ -21,12 +32,12 @@ export default function ClientVoicesSection() {
         <div className="cv-marquee-wrap">
           <div className="cv-marquee-row">
             <div className="cv-track">
-              {[...VIDEO_IDS, ...VIDEO_IDS].map((id, i) => (
+              {[...VIDEOS, ...VIDEOS].map((src, i) => (
                 <VideoCard
                   key={i}
-                  src={`/heroVideos/${id}.mp4`}
+                  src={src}
                   label="Watch Story"
-                  onClick={() => setActiveVideo(`/heroVideos/${id}.mp4`)}
+                  onClick={() => setActiveVideo(src)}
                 />
               ))}
             </div>
