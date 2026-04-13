@@ -29,13 +29,6 @@
   padding: 0;
 }
 
-html, body, * {
-  cursor: none !important;
-}
-
-input, textarea, select {
-  cursor: text !important;
-}
 
 html {
   scroll-behavior: smooth;
@@ -1460,12 +1453,13 @@ footer {
   display: none;
   position: fixed; inset: 0;
   background: rgba(255, 255, 255, 0.97);
-  z-index: 999;
+  z-index: 1001;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2rem;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .mobile-nav.open { display: flex; }
 .mobile-nav a {
@@ -1477,9 +1471,22 @@ footer {
 }
 .mobile-nav a:hover { color: var(--orange); }
 .mobile-close {
-  position: absolute; top: 1.5rem; right: 2rem;
-  font-size: clamp(1.6rem, 5vw, 2rem);
+  position: absolute; top: 1.25rem; right: 1.25rem;
+  font-size: 1.4rem;
   color: var(--dark); background: none; border: none;
+  /* large tap target — minimum 44×44px */
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: pointer !important;
+  transition: background 0.2s;
+  z-index: 10;
+}
+.mobile-close:hover,
+.mobile-close:active {
+  background: rgba(255, 107, 0, 0.1);
+  color: var(--orange);
 }
 
 /* ─── STAT CARDS ──────────────────────────────── */
