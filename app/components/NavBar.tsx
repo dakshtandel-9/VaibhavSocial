@@ -1,9 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { WA_LINK, nav } from '../../lib/content';
+import type { NavContent } from '../../lib/content';
 
-export default function NavBar() {
+interface NavBarProps {
+  waLink: string;
+  nav: NavContent;
+}
+
+export default function NavBar({ waLink, nav }: NavBarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -19,12 +24,13 @@ export default function NavBar() {
     <>
       {/* ─── MOBILE NAV OVERLAY ──────────────────── */}
       <div className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
+        <button className="mobile-close" onClick={close} aria-label="Close menu">✕</button>
         <a href="#services" onClick={close}>Services</a>
         <a href="#showcase" onClick={close}>Work</a>
         <a href="#results"  onClick={close}>Results</a>
         <a href="#about"    onClick={close}>About</a>
         <a
-          href={WA_LINK}
+          href={waLink}
           target="_blank"
           rel="noopener noreferrer"
           className="btn-talk"
@@ -44,7 +50,7 @@ export default function NavBar() {
           <li><a href="#results">Results</a></li>
           <li><a href="#about">About</a></li>
         </ul>
-        <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk">{nav.cta}</a>
+        <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn-talk">{nav.cta}</a>
 
         {/* Single toggle button — shows ≡ or ✕ */}
         <button

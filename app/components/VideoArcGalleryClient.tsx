@@ -1,9 +1,7 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import VideoArcGallery from './VideoArcGallery';
 
-const VideoArcGallery = dynamic(() => import('./VideoArcGallery'), { ssr: false });
-
-export default function VideoArcGalleryClient() {
-  return <VideoArcGallery />;
+export default function VideoArcGalleryClient({ videos }: { videos?: string[] }) {
+  return <VideoArcGallery videos={videos} />;
 }

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import { GridPattern } from './components/ui/grid-pattern';
 import BorderGlow from './components/BorderGlow';
@@ -6,23 +8,26 @@ import NavBar from './components/NavBar';
 import ClientVoicesSection from './components/ClientVoicesSection';
 import VideoArcGalleryClient from './components/VideoArcGalleryClient';
 import ShowcaseSection from './components/ShowcaseSection';
-import {
-  WA_LINK,
-  hero,
-  showcase,
-  promise,
-  services,
-  beyond,
-  results,
-  about,
-  process,
-  testimonials,
-  pricing,
-  cta,
-  footer,
-} from '../lib/content';
+import { getContent } from '../lib/content.server';
 
-export default function Home() {
+export default async function Home() {
+  const {
+    WA_LINK,
+    nav,
+    hero,
+    showcase,
+    clientVoices,
+    promise,
+    services,
+    beyond,
+    results,
+    about,
+    process,
+    testimonials,
+    pricing,
+    cta,
+    footer,
+  } = await getContent();
   return (
     <>
       {/* ─── PAGE LOADER ─────────────────────────── */}
@@ -32,7 +37,7 @@ export default function Home() {
       <div className="bottom-fade-overlay" />
 
       {/* ─── NAVBAR ─────────────────────────────── */}
-      <NavBar />
+      <NavBar waLink={WA_LINK} nav={nav} />
 
       {/* ─── HERO ────────────────────────────────────────── */}
       <section className="hero" id="hero">
@@ -60,7 +65,7 @@ export default function Home() {
             margin: '2rem 0',
             overflow: 'hidden',
           }}>
-            <VideoArcGalleryClient />
+            <VideoArcGalleryClient videos={hero.arcVideos} />
           </div>
           <div className="hero-ctas">
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
@@ -152,7 +157,7 @@ export default function Home() {
       </section>
 
       {/* ─── SHOWCASE ───────────────────────────── */}
-      <ShowcaseSection label={showcase.label} title={showcase.title} subtitle={showcase.subtitle} />
+      <ShowcaseSection label={showcase.label} title={showcase.title} subtitle={showcase.subtitle} row1={showcase.row1} row2={showcase.row2} />
 
       {/* ─── RESULTS ────────────────────────────── */}
       <section id="results" className="results-section">
@@ -185,7 +190,7 @@ export default function Home() {
             {/* main photo card */}
             <div className="about-photo-wrap">
               <Image
-                src="/Profile/profile.jpg"
+                src={about.profileImage || '/Profile/profile.jpg'}
                 alt="Vaibhav — Content Strategist"
                 className="about-photo"
                 width={480}
@@ -197,14 +202,18 @@ export default function Home() {
             </div>
 
             {/* floating stat pills */}
-            <div className="about-stat-pill about-stat-pill--top">
-              <span className="about-stat-icon">📈</span>
-              <span className="about-stat-text"><strong>150M+</strong> Views Generated</span>
-            </div>
-            <div className="about-stat-pill about-stat-pill--bottom">
-              <span className="about-stat-icon">🚀</span>
-              <span className="about-stat-text"><strong>0 → 40K</strong> in 2 Months</span>
-            </div>
+            {about.statPills[0] && (
+              <div className="about-stat-pill about-stat-pill--top">
+                <span className="about-stat-icon">{about.statPills[0].icon}</span>
+                <span className="about-stat-text"><strong>{about.statPills[0].strong}</strong> {about.statPills[0].text}</span>
+              </div>
+            )}
+            {about.statPills[1] && (
+              <div className="about-stat-pill about-stat-pill--bottom">
+                <span className="about-stat-icon">{about.statPills[1].icon}</span>
+                <span className="about-stat-text"><strong>{about.statPills[1].strong}</strong> {about.statPills[1].text}</span>
+              </div>
+            )}
           </div>
 
           {/* ── RIGHT: content column ── */}
@@ -310,7 +319,7 @@ export default function Home() {
       </section>
 
       {/* ─── CLIENT VOICES ───────────────────────── */}
-      <ClientVoicesSection />
+      <ClientVoicesSection videos={clientVoices.videos} />
 
       {/* ─── PRICING ────────────────────────────── */}
       <section id="pricing" className="pricing-section">
@@ -346,31 +355,25 @@ export default function Home() {
           {/* availability pill */}
           <div className="cta-availability-pill">
             <span className="cta-avail-dot" />
-            <span>2 spots open this month</span>
+            <span>{cta.availabilityText}</span>
           </div>
 
           <h2 className="cta-headline">
-            Ready to Grow{' '}
-            <span className="cta-headline-accent">Your Channel?</span>
+            <span className="cta-headline-accent">{cta.headline}</span>
           </h2>
           <p className="cta-sub">{cta.sub}</p>
 
           {/* trust badges */}
           <div className="cta-badges">
-            <div className="cta-badge">
-              <span className="cta-badge-num">150M+</span>
-              <span className="cta-badge-label">Views Delivered</span>
-            </div>
-            <div className="cta-badge-divider" />
-            <div className="cta-badge">
-              <span className="cta-badge-num">50+</span>
-              <span className="cta-badge-label">Happy Creators</span>
-            </div>
-            <div className="cta-badge-divider" />
-            <div className="cta-badge">
-              <span className="cta-badge-num">5★</span>
-              <span className="cta-badge-label">Average Rating</span>
-            </div>
+            {cta.badges.map((badge, i) => (
+              <>
+                {i > 0 && <div key={`d${i}`} className="cta-badge-divider" />}
+                <div key={badge.num} className="cta-badge">
+                  <span className="cta-badge-num">{badge.num}</span>
+                  <span className="cta-badge-label">{badge.label}</span>
+                </div>
+              </>
+            ))}
           </div>
 
           <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="cta-btn-main">
@@ -381,7 +384,7 @@ export default function Home() {
             {cta.btn}
           </a>
 
-          <p className="cta-note">Free strategy call · No commitment · Reply in minutes</p>
+          <p className="cta-note">{cta.note}</p>
         </div>
       </section>
 

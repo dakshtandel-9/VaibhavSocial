@@ -1,34 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { VideoCard, VideoModal } from './VideoCardGrid';
-
-const ROW1 = [
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060187/010_q2pgb5.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060174/01_zwpokk.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060173/03_ex2aox.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060172/05_foga6w.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060170/02_efrskn.mp4",
-];
-
-const ROW2 = [
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060168/04_juzngp.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060164/08_jdqd3e.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060164/06_tiyuqc.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060163/07_tynqjg.mp4",
-  "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060155/09_n7ffgg.mp4",
-];
 
 export default function ShowcaseSection({
   label,
   title,
   subtitle,
+  row1 = [],
+  row2 = [],
 }: {
   label: string;
   title: string;
   subtitle: string;
+  row1?: string[];
+  row2?: string[];
 }) {
+  const ROW1 = row1.filter(Boolean);
+  const ROW2 = row2.filter(Boolean);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   return (
     <>
@@ -41,36 +34,28 @@ export default function ShowcaseSection({
           <p className="section-sub">{subtitle}</p>
         </div>
 
-        {/* ── Two scrolling rows of thumbnail cards ── */}
-        <div className="cv-marquee-wrap">
-          {/* Row 1 — scrolls left */}
-          <div className="cv-marquee-row">
-            <div className="cv-track">
-              {[...ROW1, ...ROW1].map((src, i) => (
-                <VideoCard
-                  key={i}
-                  src={src}
-                  label="Watch Edit"
-                  onClick={() => setActiveVideo(src)}
-                />
-              ))}
-            </div>
+        {mounted && (
+          <div className="cv-marquee-wrap">
+            {ROW1.length > 0 && (
+              <div className="cv-marquee-row">
+                <div className="cv-track">
+                  {[...ROW1, ...ROW1].map((src, i) => (
+                    <VideoCard key={i} src={src} label="Watch Edit" onClick={() => setActiveVideo(src)} />
+                  ))}
+                </div>
+              </div>
+            )}
+            {ROW2.length > 0 && (
+              <div className="cv-marquee-row cv-reverse">
+                <div className="cv-track">
+                  {[...ROW2, ...ROW2].map((src, i) => (
+                    <VideoCard key={i} src={src} label="Watch Edit" onClick={() => setActiveVideo(src)} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* Row 2 — scrolls right */}
-          <div className="cv-marquee-row cv-reverse">
-            <div className="cv-track">
-              {[...ROW2, ...ROW2].map((src, i) => (
-                <VideoCard
-                  key={i}
-                  src={src}
-                  label="Watch Edit"
-                  onClick={() => setActiveVideo(src)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+        )}
       </section>
 
       {activeVideo && (
