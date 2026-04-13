@@ -13,16 +13,24 @@ export default function NavBar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const close = () => setMobileOpen(false);
+
   return (
     <>
-      {/* ─── MOBILE NAV ─────────────────────────── */}
+      {/* ─── MOBILE NAV OVERLAY ──────────────────── */}
       <div className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
-        <button className="mobile-close" onClick={() => setMobileOpen(false)} aria-label="Close">✕</button>
-        <a href="#services" onClick={() => setMobileOpen(false)}>Services</a>
-        <a href="#showcase" onClick={() => setMobileOpen(false)}>Work</a>
-        <a href="#results" onClick={() => setMobileOpen(false)}>Results</a>
-        <a href="#about" onClick={() => setMobileOpen(false)}>About</a>
-        <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk" style={{ marginTop: '0.5rem' }}>
+        <a href="#services" onClick={close}>Services</a>
+        <a href="#showcase" onClick={close}>Work</a>
+        <a href="#results"  onClick={close}>Results</a>
+        <a href="#about"    onClick={close}>About</a>
+        <a
+          href={WA_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-talk"
+          style={{ marginTop: '0.5rem' }}
+          onClick={close}
+        >
           {nav.cta}
         </a>
       </div>
@@ -37,8 +45,17 @@ export default function NavBar() {
           <li><a href="#about">About</a></li>
         </ul>
         <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="btn-talk">{nav.cta}</a>
-        <button className="hamburger" onClick={() => setMobileOpen(true)} aria-label="Open menu">
-          <span /><span /><span />
+
+        {/* Single toggle button — shows ≡ or ✕ */}
+        <button
+          className={`hamburger ${mobileOpen ? 'is-open' : ''}`}
+          onClick={() => setMobileOpen(o => !o)}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen
+            ? <span className="hamburger-x">✕</span>
+            : <><span /><span /><span /></>}
         </button>
       </nav>
     </>

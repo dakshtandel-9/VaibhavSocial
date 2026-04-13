@@ -52,7 +52,14 @@ export default function Home() {
             <span className="orange-word">{hero.headline[1]}</span>
           </h1>
           <p className="hero-sub">{hero.sub}</p>
-          <div style={{ width: '100%', margin: '2rem 0', overflow: 'hidden' }}>
+          <div style={{
+            width: '100vw',
+            position: 'relative',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            margin: '2rem 0',
+            overflow: 'hidden',
+          }}>
             <VideoArcGalleryClient />
           </div>
           <div className="hero-ctas">

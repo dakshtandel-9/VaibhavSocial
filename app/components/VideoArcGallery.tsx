@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 const VIDEOS = [
   "https://res.cloudinary.com/dlk0wvka6/video/upload/v1776060187/010_q2pgb5.mp4",
@@ -16,15 +16,13 @@ const VIDEOS = [
 ];
 
 const N = VIDEOS.length;
-// How many cards to render on each side of the active card
-const WINDOW = 6;
-const AUTO_SCROLL_INTERVAL = 1800; // ms
+const WINDOW_SIZE = 6; // cards rendered on each side
+const AUTO_SCROLL_INTERVAL = 1800;
 
-function getCardDimensions() {
-  if (typeof window === 'undefined') return { CARD_W: 180, CARD_H: 320, GAP: 16 };
-  const vw = window.innerWidth;
-  if (vw < 480) return { CARD_W: 120, CARD_H: 210, GAP: 10 };
-  if (vw < 768) return { CARD_W: 145, CARD_H: 255, GAP: 12 };
+function getCardDimensions(containerW: number) {
+  if (containerW < 400) return { CARD_W: 110, CARD_H: 195, GAP: 10 };
+  if (containerW < 600) return { CARD_W: 130, CARD_H: 230, GAP: 12 };
+  if (containerW < 900) return { CARD_W: 155, CARD_H: 275, GAP: 14 };
   return { CARD_W: 180, CARD_H: 320, GAP: 16 };
 }
 
@@ -33,81 +31,68 @@ function mod(n: number, m: number) {
 }
 
 export default function VideoArcGallery() {
-  // virtualIndex is unbounded — never wraps, so animation always moves in one direction
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerW, setContainerW] = useState(600);
   const [virtualIndex, setVirtualIndex] = useState(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [dims, setDims] = useState(getCardDimensions());
   const startX = useRef(0);
 
+  // Measure the actual rendered container width
   useEffect(() => {
-    const handleResize = () => setDims(getCardDimensions());
-    setDims(getCardDimensions()); // sync on mount
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    if (!containerRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setContainerW(entry.contentRect.width);
+    });
+    ro.observe(containerRef.current);
+    setContainerW(containerRef.current.offsetWidth);
+    return () => ro.disconnect();
   }, []);
 
-  const { CARD_W, CARD_H, GAP } = dims;
+  const { CARD_W, CARD_H, GAP } = getCardDimensions(containerW);
   const ITEM_W = CARD_W + GAP;
 
-  const goTo = (v: number) => {
+  // Center the active card in the measured container
+  const centerOffset = containerW / 2 - CARD_W / 2;
+  const baseTranslate = centerOffset - virtualIndex * ITEM_W - dragDelta;
+
+  const goTo = useCallback((v: number) => {
     setVirtualIndex(v);
     setDragDelta(0);
-  };
+  }, []);
 
+  // Auto-scroll
   useEffect(() => {
     if (isDragging || isHovered) return;
-    const interval = setInterval(() => {
-      setVirtualIndex((v) => v + 1);
-    }, AUTO_SCROLL_INTERVAL);
-    return () => clearInterval(interval);
+    const id = setInterval(() => setVirtualIndex(v => v + 1), AUTO_SCROLL_INTERVAL);
+    return () => clearInterval(id);
   }, [isDragging, isHovered]);
 
-  const onMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    startX.current = e.clientX;
-  };
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setDragDelta(startX.current - e.clientX);
-  };
-  const onMouseUp = (e: React.MouseEvent) => {
+  // Mouse handlers
+  const onMouseDown = (e: React.MouseEvent) => { setIsDragging(true); startX.current = e.clientX; };
+  const onMouseMove = (e: React.MouseEvent) => { if (!isDragging) return; setDragDelta(startX.current - e.clientX); };
+  const onMouseUp   = (e: React.MouseEvent) => {
     if (!isDragging) return;
     setIsDragging(false);
     const delta = startX.current - e.clientX;
-    if (Math.abs(delta) > 40) {
-      goTo(delta > 0 ? virtualIndex + 1 : virtualIndex - 1);
-    } else {
-      setDragDelta(0);
-    }
+    Math.abs(delta) > 40 ? goTo(delta > 0 ? virtualIndex + 1 : virtualIndex - 1) : setDragDelta(0);
   };
-  const onTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    startX.current = e.touches[0].clientX;
-  };
-  const onTouchMove = (e: React.TouchEvent) => {
-    setDragDelta(startX.current - e.touches[0].clientX);
-  };
-  const onTouchEnd = (e: React.TouchEvent) => {
+
+  // Touch handlers
+  const onTouchStart = (e: React.TouchEvent) => { setIsDragging(true); startX.current = e.touches[0].clientX; };
+  const onTouchMove  = (e: React.TouchEvent) => { setDragDelta(startX.current - e.touches[0].clientX); };
+  const onTouchEnd   = (e: React.TouchEvent) => {
     setIsDragging(false);
     const delta = startX.current - e.changedTouches[0].clientX;
-    if (Math.abs(delta) > 40) {
-      goTo(delta > 0 ? virtualIndex + 1 : virtualIndex - 1);
-    } else {
-      setDragDelta(0);
-    }
+    Math.abs(delta) > 40 ? goTo(delta > 0 ? virtualIndex + 1 : virtualIndex - 1) : setDragDelta(0);
   };
 
-  // Build the list of virtual card indices to render
-  const cards = Array.from({ length: WINDOW * 2 + 1 }, (_, k) => virtualIndex - WINDOW + k);
-
-  // Center offset: how much to shift so the active card is in the center
-  const centerOffset = typeof window !== 'undefined' ? window.innerWidth / 2 - CARD_W / 2 : 600;
-  const baseTranslate = centerOffset - virtualIndex * ITEM_W - dragDelta;
+  const cards = Array.from({ length: WINDOW_SIZE * 2 + 1 }, (_, k) => virtualIndex - WINDOW_SIZE + k);
 
   return (
     <div
+      ref={containerRef}
       style={{
         width: '100%',
         position: 'relative',
@@ -122,15 +107,13 @@ export default function VideoArcGallery() {
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
-        onMouseLeave={(e) => {
-          onMouseUp(e);
-          setIsHovered(false);
-        }}
+        onMouseLeave={(e) => { onMouseUp(e); setIsHovered(false); }}
         onMouseEnter={() => setIsHovered(true)}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
+        {/* Cards layer */}
         <div
           style={{
             position: 'absolute',
@@ -146,8 +129,8 @@ export default function VideoArcGallery() {
             const videoSrc = VIDEOS[mod(vIdx, N)];
             const isActive = vIdx === virtualIndex;
             const dist = Math.abs(vIdx - virtualIndex);
-            const scale = isActive ? 1.08 : dist === 1 ? 0.93 : 0.86;
-            const rotY = vIdx < virtualIndex ? 8 : vIdx > virtualIndex ? -8 : 0;
+            const scale   = isActive ? 1.08 : dist === 1 ? 0.93 : 0.86;
+            const rotY    = vIdx < virtualIndex ? 8 : vIdx > virtualIndex ? -8 : 0;
             const opacity = dist > 4 ? 0 : dist === 4 ? 0.2 : dist === 3 ? 0.45 : dist === 2 ? 0.7 : 1;
             const x = baseTranslate + vIdx * ITEM_W;
 
@@ -190,37 +173,28 @@ export default function VideoArcGallery() {
 
         {/* Edge fade gradients */}
         <div style={{
-          position: 'absolute', top: 0, left: 0, bottom: 0, width: '140px',
+          position: 'absolute', top: 0, left: 0, bottom: 0, width: '15%', minWidth: '60px',
           background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
           pointerEvents: 'none', zIndex: 2,
         }} />
         <div style={{
-          position: 'absolute', top: 0, right: 0, bottom: 0, width: '140px',
+          position: 'absolute', top: 0, right: 0, bottom: 0, width: '15%', minWidth: '60px',
           background: 'linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
           pointerEvents: 'none', zIndex: 2,
         }} />
-        {/* Top fade with blur */}
+        {/* Top fade */}
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, height: '10%',
           background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
-          maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
           pointerEvents: 'none', zIndex: 3,
         }} />
-        {/* Bottom fade with blur */}
+        {/* Bottom fade */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: '10%',
           background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
-          maskImage: 'linear-gradient(to top, black 0%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 100%)',
           pointerEvents: 'none', zIndex: 3,
         }} />
       </div>
-
     </div>
   );
 }
