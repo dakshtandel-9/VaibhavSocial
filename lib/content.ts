@@ -4,7 +4,7 @@
 export const WA_LINK = 'https://wa.me/919024760502';
 
 export const nav = {
-  logo: 'Vaibhav Social',
+  logo: 'Vaibhav Khuteta',
   links: ['Services', 'Work', 'Results', 'About'],
   cta: "Let's Talk 💬",
 };
@@ -235,7 +235,7 @@ export const cta = {
 };
 
 export const footer = {
-  logo: 'Vaibhav Social',
+  logo: 'Vaibhav Khuteta',
   links: ['Services', 'Results', 'About', 'Contact'],
-  copy: '© 2026 Vaibhav Social. All rights reserved.',
+  copy: '© 2026 Vaibhav Khuteta. All rights reserved.',
 };

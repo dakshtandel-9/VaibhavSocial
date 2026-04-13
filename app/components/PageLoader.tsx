@@ -2,38 +2,82 @@
 
 import { useEffect, useState } from 'react';
 
+const SAFETY_TIMEOUT = 10_000; // never block longer than 10s
+const MIN_SHOW = 600;          // always show for at least 600ms so it doesn't flash
+
 export default function PageLoader() {
   const [phase, setPhase] = useState<'visible' | 'fading' | 'gone'>('visible');
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const finish = () => {
-      // Start fade-out
-      setPhase('fading');
-      // After transition ends, remove from DOM entirely
-      const t = setTimeout(() => setPhase('gone'), 700);
-      return t;
-    };
+    const startedAt = Date.now();
+    let cancelled = false;
 
-    let timer: ReturnType<typeof setTimeout>;
+    function dismiss() {
+      if (cancelled) return;
+      cancelled = true;
+      setProgress(100);
 
-    if (document.readyState === 'complete') {
-      // Already loaded — still show a brief minimum so it doesn't flash
-      timer = setTimeout(finish, 400);
-    } else {
-      window.addEventListener('load', () => {
-        // Small buffer so the UI paints before we reveal
-        timer = setTimeout(finish, 300);
-      }, { once: true });
+      // Honour minimum display time
+      const elapsed = Date.now() - startedAt;
+      const delay = Math.max(0, MIN_SHOW - elapsed);
 
-      // Safety net: never block more than 4 s
-      const safetyTimer = setTimeout(finish, 4000);
-      return () => {
-        clearTimeout(timer);
-        clearTimeout(safetyTimer);
-      };
+      setTimeout(() => {
+        setPhase('fading');
+        setTimeout(() => setPhase('gone'), 700);
+      }, delay);
     }
 
-    return () => clearTimeout(timer);
+    function waitForMedia() {
+      const images = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
+      const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video'));
+      const total  = images.length + videos.length;
+
+      if (total === 0) { dismiss(); return; }
+
+      let loaded = 0;
+
+      function tick() {
+        loaded++;
+        if (!cancelled) setProgress(Math.round((loaded / total) * 100));
+        if (loaded >= total) dismiss();
+      }
+
+      // ── Images ──────────────────────────────────
+      images.forEach((img) => {
+        if (img.complete && img.naturalWidth > 0) {
+          tick();
+        } else {
+          img.addEventListener('load',  tick, { once: true });
+          img.addEventListener('error', tick, { once: true }); // count errors too so we never hang
+        }
+      });
+
+      // ── Videos ──────────────────────────────────
+      // readyState >= 2 means the browser has enough data to play the current frame
+      videos.forEach((vid) => {
+        if (vid.readyState >= 2) {
+          tick();
+        } else {
+          vid.addEventListener('loadeddata', tick, { once: true });
+          vid.addEventListener('error',      tick, { once: true });
+        }
+      });
+    }
+
+    // Safety net — never block forever
+    const safety = setTimeout(dismiss, SAFETY_TIMEOUT);
+
+    if (document.readyState === 'complete') {
+      waitForMedia();
+    } else {
+      window.addEventListener('load', waitForMedia, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      clearTimeout(safety);
+    };
   }, []);
 
   if (phase === 'gone') return null;
@@ -66,10 +110,10 @@ export default function PageLoader() {
           fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}
       >
-        VS
+        VK
       </span>
 
-      {/* Animated bar */}
+      {/* Progress bar track */}
       <div
         style={{
           width: 160,
@@ -80,24 +124,31 @@ export default function PageLoader() {
           position: 'relative',
         }}
       >
+        {/* Filled portion — driven by real progress */}
         <div
           style={{
             position: 'absolute',
             inset: '0 auto 0 0',
+            width: `${progress}%`,
             background: 'linear-gradient(90deg, #FF6B00, #FF9A4D)',
             borderRadius: 99,
-            animation: 'loaderBar 1.4s ease-in-out infinite',
+            transition: 'width 0.25s ease',
           }}
         />
       </div>
 
-      <style>{`
-        @keyframes loaderBar {
-          0%   { left: -60%; width: 60%; }
-          50%  { left: 30%;  width: 70%; }
-          100% { left: 110%; width: 60%; }
-        }
-      `}</style>
+      {/* Percentage label */}
+      <span
+        style={{
+          fontSize: '0.75rem',
+          fontWeight: 600,
+          color: 'rgba(255,107,0,0.6)',
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          letterSpacing: '0.5px',
+        }}
+      >
+        {progress}%
+      </span>
     </div>
   );
 }

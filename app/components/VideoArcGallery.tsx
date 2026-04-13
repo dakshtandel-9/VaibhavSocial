@@ -16,13 +16,17 @@ const VIDEOS = [
 ];
 
 const N = VIDEOS.length;
-const CARD_W = 180;
-const CARD_H = 320;
-const GAP = 16;
-const ITEM_W = CARD_W + GAP;
 // How many cards to render on each side of the active card
 const WINDOW = 6;
 const AUTO_SCROLL_INTERVAL = 1800; // ms
+
+function getCardDimensions() {
+  if (typeof window === 'undefined') return { CARD_W: 180, CARD_H: 320, GAP: 16 };
+  const vw = window.innerWidth;
+  if (vw < 480) return { CARD_W: 120, CARD_H: 210, GAP: 10 };
+  if (vw < 768) return { CARD_W: 145, CARD_H: 255, GAP: 12 };
+  return { CARD_W: 180, CARD_H: 320, GAP: 16 };
+}
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -34,7 +38,18 @@ export default function VideoArcGallery() {
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [dims, setDims] = useState(getCardDimensions());
   const startX = useRef(0);
+
+  useEffect(() => {
+    const handleResize = () => setDims(getCardDimensions());
+    setDims(getCardDimensions()); // sync on mount
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const { CARD_W, CARD_H, GAP } = dims;
+  const ITEM_W = CARD_W + GAP;
 
   const goTo = (v: number) => {
     setVirtualIndex(v);
