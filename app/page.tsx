@@ -58,10 +58,8 @@ export default async function Home() {
           </h1>
           <p className="hero-sub">{hero.sub}</p>
           <div style={{
-            width: '100vw',
+            width: '100%',
             position: 'relative',
-            left: '50%',
-            transform: 'translateX(-50%)',
             margin: '2rem 0',
             overflow: 'hidden',
           }}>
