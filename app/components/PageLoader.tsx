@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 
-const SAFETY_TIMEOUT = 10_000; // never block longer than 10s
-const MIN_SHOW = 600;          // always show for at least 600ms so it doesn't flash
+const SAFETY_TIMEOUT = 10_000;
+const MIN_SHOW = 700;
 
 export default function PageLoader() {
-  const [phase, setPhase] = useState<'visible' | 'fading' | 'gone'>('visible');
-  const [progress, setProgress] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const [fading, setFading] = useState(false);
 
   useEffect(() => {
     const startedAt = Date.now();
@@ -16,139 +16,92 @@ export default function PageLoader() {
     function dismiss() {
       if (cancelled) return;
       cancelled = true;
-      setProgress(100);
-
-      // Honour minimum display time
       const elapsed = Date.now() - startedAt;
       const delay = Math.max(0, MIN_SHOW - elapsed);
-
       setTimeout(() => {
-        setPhase('fading');
-        setTimeout(() => setPhase('gone'), 700);
+        setFading(true);
+        setTimeout(() => setVisible(false), 700);
       }, delay);
     }
 
     function waitForMedia() {
       const images = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
       const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video'));
-      const total  = images.length + videos.length;
-
+      const total = images.length + videos.length;
       if (total === 0) { dismiss(); return; }
-
       let loaded = 0;
-
-      function tick() {
-        loaded++;
-        if (!cancelled) setProgress(Math.round((loaded / total) * 100));
-        if (loaded >= total) dismiss();
-      }
-
-      // ── Images ──────────────────────────────────
+      function tick() { if (++loaded >= total) dismiss(); }
       images.forEach((img) => {
-        if (img.complete && img.naturalWidth > 0) {
-          tick();
-        } else {
-          img.addEventListener('load',  tick, { once: true });
-          img.addEventListener('error', tick, { once: true }); // count errors too so we never hang
+        if (img.complete && img.naturalWidth > 0) tick();
+        else {
+          img.addEventListener('load', tick, { once: true });
+          img.addEventListener('error', tick, { once: true });
         }
       });
-
-      // ── Videos ──────────────────────────────────
-      // readyState >= 2 means the browser has enough data to play the current frame
       videos.forEach((vid) => {
-        if (vid.readyState >= 2) {
-          tick();
-        } else {
+        if (vid.readyState >= 2) tick();
+        else {
           vid.addEventListener('loadeddata', tick, { once: true });
-          vid.addEventListener('error',      tick, { once: true });
+          vid.addEventListener('error', tick, { once: true });
         }
       });
     }
 
-    // Safety net — never block forever
     const safety = setTimeout(dismiss, SAFETY_TIMEOUT);
+    if (document.readyState === 'complete') waitForMedia();
+    else window.addEventListener('load', waitForMedia, { once: true });
 
-    if (document.readyState === 'complete') {
-      waitForMedia();
-    } else {
-      window.addEventListener('load', waitForMedia, { once: true });
-    }
-
-    return () => {
-      cancelled = true;
-      clearTimeout(safety);
-    };
+    return () => { cancelled = true; clearTimeout(safety); };
   }, []);
 
-  if (phase === 'gone') return null;
+  if (!visible) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: '#FFFFFF',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '1.5rem',
-        transition: 'opacity 0.7s ease, visibility 0.7s ease',
-        opacity: phase === 'fading' ? 0 : 1,
-        visibility: phase === 'fading' ? 'hidden' : 'visible',
-        pointerEvents: phase === 'fading' ? 'none' : 'auto',
-      }}
-    >
-      {/* Logo wordmark */}
-      <span
-        style={{
-          fontSize: 'clamp(1.8rem, 5vw, 2.6rem)',
-          fontWeight: 800,
-          color: '#FF6B00',
-          letterSpacing: '-1px',
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-        }}
-      >
-        VK
-      </span>
-
-      {/* Progress bar track */}
+    <>
+      <style>{`
+        @keyframes vk-spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       <div
         style={{
-          width: 160,
-          height: 3,
-          borderRadius: 99,
-          background: 'rgba(255,107,0,0.15)',
-          overflow: 'hidden',
-          position: 'relative',
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          background: '#FFFFFF',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'opacity 0.7s ease',
+          opacity: fading ? 0 : 1,
+          pointerEvents: fading ? 'none' : 'auto',
         }}
       >
-        {/* Filled portion — driven by real progress */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: '0 auto 0 0',
-            width: `${progress}%`,
-            background: 'linear-gradient(90deg, #FF6B00, #FF9A4D)',
-            borderRadius: 99,
-            transition: 'width 0.25s ease',
-          }}
-        />
-      </div>
+        <div style={{ position: 'relative', width: 64, height: 64 }}>
+          {/* Track ring */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              border: '4px solid rgba(255, 107, 0, 0.12)',
+            }}
+          />
+          {/* Spinning arc */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              border: '4px solid transparent',
+              borderTopColor: '#FF6B00',
+              borderRightColor: 'rgba(255,107,0,0.4)',
+              animation: 'vk-spin 0.8s cubic-bezier(0.6,0.2,0.4,0.8) infinite',
+            }}
+          />
 
-      {/* Percentage label */}
-      <span
-        style={{
-          fontSize: '0.75rem',
-          fontWeight: 600,
-          color: 'rgba(255,107,0,0.6)',
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          letterSpacing: '0.5px',
-        }}
-      >
-        {progress}%
-      </span>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

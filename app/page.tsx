@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import { GridPattern } from './components/ui/grid-pattern';
 import BorderGlow from './components/BorderGlow';
-import PageLoader from './components/PageLoader';
+import PageLoaderClient from './components/PageLoaderClient';
 import NavBar from './components/NavBar';
 import ClientVoicesSection from './components/ClientVoicesSection';
 import VideoArcGalleryClient from './components/VideoArcGalleryClient';
@@ -31,7 +31,7 @@ export default async function Home() {
   return (
     <>
       {/* ─── PAGE LOADER ─────────────────────────── */}
-      <PageLoader />
+      <PageLoaderClient />
 
       {/* ─── BOTTOM FADE OVERLAY ────────────────── */}
       <div className="bottom-fade-overlay" />
@@ -364,13 +364,13 @@ export default async function Home() {
           {/* trust badges */}
           <div className="cta-badges">
             {cta.badges.map((badge, i) => (
-              <>
-                {i > 0 && <div key={`d${i}`} className="cta-badge-divider" />}
-                <div key={badge.num} className="cta-badge">
+              <div key={badge.num} style={{ display: 'contents' }}>
+                {i > 0 && <div className="cta-badge-divider" />}
+                <div className="cta-badge">
                   <span className="cta-badge-num">{badge.num}</span>
                   <span className="cta-badge-label">{badge.label}</span>
                 </div>
-              </>
+              </div>
             ))}
           </div>
 
