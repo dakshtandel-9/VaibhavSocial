@@ -11,7 +11,7 @@
     "cta": "Let's Talk 💬"
   },
   "hero": {
-    "badge": "🎥 Content Strategist & Growth Partner 23",
+    "badge": "🎥 Content Strategist & Growth Partner",
     "headline": [
       "Your Content.",
       "Supercharged."
@@ -138,7 +138,7 @@
     ],
     "quote": "The real reason I do this? I have a genuine passion for social media. I create content myself, and that's exactly why I love helping others grow. This isn't just work for me — it's what I live and breathe.",
     "cta": "Chat on WhatsApp →",
-    "profileImage": "/Profile/profile.jpg",
+    "profileImage": "https://res.cloudinary.com/dwethh3fq/image/upload/v1777453592/profile_kunbeq.avif",
     "statPills": [
       {
         "icon": "📈",
