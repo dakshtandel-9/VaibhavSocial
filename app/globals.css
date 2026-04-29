@@ -1110,6 +1110,42 @@ section { padding: 6rem 2rem; }
   animation-duration: 45s;
 }
 
+/* showcase: same layout as cv-* but user-scrollable + JS-driven auto-scroll */
+.sc-marquee-row {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 0;
+  margin: -12px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
+  overscroll-behavior-x: contain;
+  white-space: nowrap;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sc-marquee-row::-webkit-scrollbar { display: none; }
+
+.sc-track {
+  display: inline-flex !important;
+  flex-wrap: nowrap !important;
+  gap: 1.25rem;
+  width: max-content;
+  min-width: max-content;
+  max-width: none !important;
+  will-change: scroll-position;
+  vertical-align: top;
+}
+.sc-track > .cv-card {
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+}
+
 
 /* video card / button */
 .cv-card {
@@ -1553,7 +1589,10 @@ footer {
   }
   .showcase-marquee-track,
   .reviews-track,
-  .cv-track {
+  .cv-track,
+  .sc-track,
+  .sc-track > .cv-card,
+  .cv-track > .cv-card {
     max-width: none;
   }
 }

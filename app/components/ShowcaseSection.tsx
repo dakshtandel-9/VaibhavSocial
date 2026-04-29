@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { VideoCard, VideoModal } from './VideoCardGrid';
+import { ScrollMarqueeRow, VideoModal } from './VideoCardGrid';
 
 export default function ShowcaseSection({
   label,
@@ -37,22 +37,19 @@ export default function ShowcaseSection({
         {mounted && (
           <div className="cv-marquee-wrap">
             {ROW1.length > 0 && (
-              <div className="cv-marquee-row">
-                <div className="cv-track">
-                  {[...ROW1, ...ROW1].map((src, i) => (
-                    <VideoCard key={i} src={src} label="Watch Edit" onClick={() => setActiveVideo(src)} />
-                  ))}
-                </div>
-              </div>
+              <ScrollMarqueeRow
+                videos={ROW1}
+                label="Watch Edit"
+                onCardClick={setActiveVideo}
+              />
             )}
             {ROW2.length > 0 && (
-              <div className="cv-marquee-row cv-reverse">
-                <div className="cv-track">
-                  {[...ROW2, ...ROW2].map((src, i) => (
-                    <VideoCard key={i} src={src} label="Watch Edit" onClick={() => setActiveVideo(src)} />
-                  ))}
-                </div>
-              </div>
+              <ScrollMarqueeRow
+                videos={ROW2}
+                label="Watch Edit"
+                reverse
+                onCardClick={setActiveVideo}
+              />
             )}
           </div>
         )}

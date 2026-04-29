@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { videoPoster } from '../../lib/videoPoster';
 
 const WINDOW_SIZE = 6;
@@ -24,12 +24,8 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerW, setContainerW] = useState(600);
   const [virtualIndex, setVirtualIndex] = useState(0);
-  const [dragDelta, setDragDelta] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [modalSrc, setModalSrc] = useState<string | null>(null);
-  const startX = useRef(0);
-  const dragMoved = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -42,41 +38,13 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
   const { CARD_W, CARD_H, GAP } = getCardDimensions(containerW);
   const ITEM_W = CARD_W + GAP;
   const centerOffset = containerW / 2 - CARD_W / 2;
-  const baseTranslate = centerOffset - virtualIndex * ITEM_W - dragDelta;
-
-  const goTo = useCallback((v: number) => { setVirtualIndex(v); setDragDelta(0); }, []);
+  const baseTranslate = centerOffset - virtualIndex * ITEM_W;
 
   useEffect(() => {
-    if (isDragging || isHovered || N === 0) return;
+    if (isHovered || N === 0) return;
     const id = setInterval(() => setVirtualIndex(v => v + 1), AUTO_SCROLL_INTERVAL);
     return () => clearInterval(id);
-  }, [isDragging, isHovered, N]);
-
-  const onMouseDown = (e: React.MouseEvent) => { setIsDragging(true); dragMoved.current = false; startX.current = e.clientX; };
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    const d = startX.current - e.clientX;
-    if (Math.abs(d) > 5) dragMoved.current = true;
-    setDragDelta(d);
-  };
-  const onMouseUp = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    const delta = startX.current - e.clientX;
-    Math.abs(delta) > 40 ? goTo(delta > 0 ? virtualIndex + 1 : virtualIndex - 1) : setDragDelta(0);
-  };
-
-  const onTouchStart = (e: React.TouchEvent) => { setIsDragging(true); dragMoved.current = false; startX.current = e.touches[0].clientX; };
-  const onTouchMove  = (e: React.TouchEvent) => {
-    const d = startX.current - e.touches[0].clientX;
-    if (Math.abs(d) > 5) dragMoved.current = true;
-    setDragDelta(d);
-  };
-  const onTouchEnd   = (e: React.TouchEvent) => {
-    setIsDragging(false);
-    const delta = startX.current - e.changedTouches[0].clientX;
-    Math.abs(delta) > 40 ? goTo(delta > 0 ? virtualIndex + 1 : virtualIndex - 1) : setDragDelta(0);
-  };
+  }, [isHovered, N]);
 
   if (N === 0) return null;
 
@@ -86,20 +54,14 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
     <>
       <div
         ref={containerRef}
-        style={{ width: '100%', position: 'relative', overflow: 'hidden', padding: '1.5rem 0 2rem', userSelect: 'none' }}
+        style={{ width: '100%', position: 'relative', overflow: 'hidden', padding: '1.5rem 0 2rem', userSelect: 'none', touchAction: 'pan-y' }}
       >
         <div
           style={{ position: 'relative', height: `${CARD_H + 60}px`, overflow: 'hidden' }}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={(e) => { onMouseUp(e); setIsHovered(false); }}
           onMouseEnter={() => setIsHovered(true)}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, width: '100%', height: `${CARD_H}px`, cursor: isDragging ? 'grabbing' : 'grab' }}>
+          <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, width: '100%', height: `${CARD_H}px` }}>
             {cards.map((vIdx) => {
               const videoSrc = VIDEOS[mod(vIdx, N)];
               const isActive = vIdx === virtualIndex;
@@ -112,11 +74,7 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
               return (
                 <div
                   key={vIdx}
-                  onClick={() => {
-                    if (dragMoved.current) return;
-                    if (vIdx !== virtualIndex) { goTo(vIdx); return; }
-                    setModalSrc(videoSrc);
-                  }}
+                  onClick={() => { if (isActive) setModalSrc(videoSrc); }}
                   style={{
                     position: 'absolute', left: 0, top: 0,
                     width: `${CARD_W}px`, height: `${CARD_H}px`,
@@ -125,11 +83,10 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
                     border: isActive ? '2px solid rgba(255,107,0,0.5)' : '2px solid rgba(255,255,255,0.08)',
                     transform: `translateX(${x}px) scale(${scale}) perspective(800px) rotateY(${rotY}deg)`,
                     transformOrigin: 'center center',
-                    transition: isDragging
-                      ? 'opacity 0.2s, transform 0.05s'
-                      : 'transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.4s ease, border-color 0.4s ease, opacity 0.4s ease',
-                    opacity, cursor: 'pointer', willChange: 'transform',
+                    transition: 'transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.4s ease, border-color 0.4s ease, opacity 0.4s ease',
+                    opacity, cursor: isActive ? 'pointer' : 'default', willChange: 'transform',
                     background: '#1a1a1a',
+                    pointerEvents: isActive ? 'auto' : 'none',
                   }}
                 >
                   {/* Static image thumbnail — mp4 only loads when modal opens */}
