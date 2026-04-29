@@ -65,13 +65,25 @@ body {
   backdrop-filter: blur(14px);
 }
 .navbar-logo {
-  font-size: clamp(0.95rem, 2vw, 1.15rem);
-  font-weight: 900;
-  color: var(--orange);
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 0;
+}
+.navbar-logo-img {
+  height: 40px !important;
+  width: auto !important;
+  max-width: 200px;
+  display: block;
+  object-fit: contain;
+  transition: height 0.3s;
+}
+.navbar.scrolled .navbar-logo-img {
+  height: 32px !important;
+}
+@media (max-width: 640px) {
+  .navbar-logo-img { height: 32px !important; }
+  .navbar.scrolled .navbar-logo-img { height: 28px !important; }
 }
 .nav-links {
   display: flex;

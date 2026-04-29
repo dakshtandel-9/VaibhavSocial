@@ -43,7 +43,15 @@ export default function NavBar({ waLink, nav }: NavBarProps) {
 
       {/* ─── NAVBAR ─────────────────────────────── */}
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-        <a href="#" className="navbar-logo">{nav.logo}</a>
+        <a href="#" className="navbar-logo" aria-label={nav.logo}>
+          <img
+            src="https://res.cloudinary.com/dwethh3fq/image/upload/v1777448586/Copy_of_SANJARI_ttuuye.svg"
+            alt={nav.logo}
+            className="navbar-logo-img"
+            height={40}
+            style={{ height: 40, width: 'auto', display: 'block' }}
+          />
+        </a>
         <ul className="nav-links">
           <li><a href="#services">Services</a></li>
           <li><a href="#showcase">Work</a></li>

@@ -16,17 +16,6 @@ function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
 
-// Convert a Cloudinary video URL → lightweight JPEG thumbnail
-function cloudinaryThumb(url: string): string | null {
-  const match = url.match(
-    /^(https:\/\/res\.cloudinary\.com\/[^/]+\/video\/upload\/)(.+\.(mp4|mov|webm))$/i
-  );
-  if (!match) return null;
-  const [, base, path] = match;
-  const withoutExt = path.replace(/\.[^.]+$/, '');
-  return `${base}so_0,w_400,h_700,c_fill,q_auto,f_jpg/${withoutExt}.jpg`;
-}
-
 export default function VideoArcGallery({ videos: videosProp }: { videos?: string[] }) {
   const VIDEOS = videosProp?.filter(Boolean) ?? [];
   const N = VIDEOS.length;
@@ -112,7 +101,6 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
           <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, width: '100%', height: `${CARD_H}px`, cursor: isDragging ? 'grabbing' : 'grab' }}>
             {cards.map((vIdx) => {
               const videoSrc = VIDEOS[mod(vIdx, N)];
-              const thumb = cloudinaryThumb(videoSrc);
               const isActive = vIdx === virtualIndex;
               const dist = Math.abs(vIdx - virtualIndex);
               const scale   = isActive ? 1.08 : dist === 1 ? 0.93 : 0.86;
@@ -143,18 +131,16 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
                     background: '#1a1a1a',
                   }}
                 >
-                  {/* Thumbnail image — no video load */}
-                  {thumb ? (
-                    <img
-                      src={thumb}
-                      alt=""
-                      loading="lazy"
-                      draggable={false}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
-                    />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', background: '#222' }} />
-                  )}
+                  {/* First-frame preview from local mp4 */}
+                  <video
+                    src={videoSrc}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    draggable={false}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
+                  />
+
 
                   {/* Play button overlay — only on center card */}
                   {isActive && (

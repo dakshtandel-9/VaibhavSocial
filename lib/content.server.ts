@@ -1,9 +1,8 @@
-// ─── SERVER-ONLY: reads content from Supabase ──────────────────────────────
+// ─── SERVER-ONLY: reads content from local JSON files ──────────────────────
 // Import ONLY in Server Components or API routes — never in 'use client' files.
 
 import fs from 'fs';
 import path from 'path';
-import { supabase } from './supabase';
 
 export type SiteContent = {
   WA_LINK: string;
@@ -17,7 +16,7 @@ export type SiteContent = {
     arcVideos: string[];
   };
   showcase: { label: string; title: string; subtitle: string; row1: string[]; row2: string[] };
-  clientVoices: { videos: string[] };
+  clientVoices: { visible: boolean; videos: string[] };
   promise: { headline: string; highlight: string; body: string };
   services: {
     label: string; title: string; subtitle: string;
@@ -56,38 +55,29 @@ export type SiteContent = {
   footer: { logo: string; links: string[]; copy: string };
 };
 
-function getLocalContent(): SiteContent {
-  const filePath = path.join(process.cwd(), 'lib', 'content.json');
+function readJson<T>(relPath: string): T {
+  const filePath = path.join(process.cwd(), relPath);
   const raw = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(raw) as SiteContent;
+  return JSON.parse(raw) as T;
 }
 
 export async function getContent(): Promise<SiteContent> {
-  try {
-    const { data, error } = await supabase
-      .from('site_content')
-      .select('content')
-      .eq('id', 1)
-      .single();
+  const base = readJson<Omit<SiteContent, 'hero' | 'showcase' | 'clientVoices'> & {
+    hero: Omit<SiteContent['hero'], 'arcVideos'>;
+    showcase: Omit<SiteContent['showcase'], 'row1' | 'row2'>;
+  }>('lib/content.json');
 
-    if (error || !data?.content || Object.keys(data.content).length === 0) {
-      // Supabase has no content yet — seed it from content.json
-      const local = getLocalContent();
-      await supabase.from('site_content').upsert({ id: 1, content: local });
-      return local;
-    }
+  const heroVideos = readJson<{ videos: string[] }>('lib/videos/hero.json');
+  const showcaseVideos = readJson<{ row1: string[]; row2: string[] }>('lib/videos/showcase.json');
+  const clientVoicesVideos = readJson<{ visible?: boolean; videos: string[] }>('lib/videos/client-voices.json');
 
-    return data.content as SiteContent;
-  } catch {
-    // Fallback to local file if Supabase is unreachable
-    return getLocalContent();
-  }
-}
-
-export async function saveContent(content: SiteContent): Promise<void> {
-  const { error } = await supabase
-    .from('site_content')
-    .upsert({ id: 1, content, updated_at: new Date().toISOString() });
-
-  if (error) throw new Error(error.message);
+  return {
+    ...base,
+    hero: { ...base.hero, arcVideos: heroVideos.videos },
+    showcase: { ...base.showcase, row1: showcaseVideos.row1, row2: showcaseVideos.row2 },
+    clientVoices: {
+      visible: clientVoicesVideos.visible ?? true,
+      videos: clientVoicesVideos.videos,
+    },
+  };
 }

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import { GridPattern } from './components/ui/grid-pattern';
 import BorderGlow from './components/BorderGlow';
-import PageLoaderClient from './components/PageLoaderClient';
+import PageLoader from './components/PageLoader';
 import NavBar from './components/NavBar';
 import ClientVoicesSection from './components/ClientVoicesSection';
 import VideoArcGalleryClient from './components/VideoArcGalleryClient';
@@ -31,7 +31,7 @@ export default async function Home() {
   return (
     <>
       {/* ─── PAGE LOADER ─────────────────────────── */}
-      <PageLoaderClient />
+      <PageLoader />
 
       {/* ─── BOTTOM FADE OVERLAY ────────────────── */}
       <div className="bottom-fade-overlay" />
@@ -317,7 +317,7 @@ export default async function Home() {
       </section>
 
       {/* ─── CLIENT VOICES ───────────────────────── */}
-      <ClientVoicesSection videos={clientVoices.videos} />
+      {clientVoices.visible && <ClientVoicesSection videos={clientVoices.videos} />}
 
       {/* ─── PRICING ────────────────────────────── */}
       <section id="pricing" className="pricing-section">
