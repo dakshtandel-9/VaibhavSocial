@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { videoPoster } from '../../lib/videoPoster';
 
 const WINDOW_SIZE = 6;
 const AUTO_SCROLL_INTERVAL = 1800;
@@ -131,12 +132,12 @@ export default function VideoArcGallery({ videos: videosProp }: { videos?: strin
                     background: '#1a1a1a',
                   }}
                 >
-                  {/* First-frame preview from local mp4 */}
-                  <video
-                    src={videoSrc}
-                    muted
-                    playsInline
-                    preload="metadata"
+                  {/* Static image thumbnail — mp4 only loads when modal opens */}
+                  <img
+                    src={videoPoster(videoSrc)}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
                     draggable={false}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
                   />

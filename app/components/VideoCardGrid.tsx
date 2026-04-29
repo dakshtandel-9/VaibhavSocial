@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import { videoPoster } from '../../lib/videoPoster';
 
 /* ─── Single thumbnail card ─────────────────────────────────────── */
 export function VideoCard({
@@ -12,27 +13,19 @@ export function VideoCard({
   label?: string;
   onClick: () => void;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const handleLoaded = () => {
-    const el = videoRef.current;
-    if (el) el.currentTime = 0.5;
-  };
-
   return (
     <button
       className="cv-card"
       onClick={onClick}
       aria-label={label}
     >
-      <video
-        ref={videoRef}
-        src={src}
-        muted
-        playsInline
-        preload="metadata"
+      <img
+        src={videoPoster(src)}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        draggable={false}
         className="cv-thumb"
-        onLoadedMetadata={handleLoaded}
       />
       <div className="cv-play-overlay">
         <div className="cv-play-btn">
